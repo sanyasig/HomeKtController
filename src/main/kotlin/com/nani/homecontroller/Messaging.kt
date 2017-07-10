@@ -1,19 +1,24 @@
 package start.com.nani.homecontroller;
 
+import com.nani.homecontroller.services.ADBService
+import com.nani.homecontroller.services.HomeService
+import com.nani.homecontroller.services.IRService
+import com.nani.homecontroller.services.LifxService
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
 import org.eclipse.paho.client.mqttv3.MqttCallback
 import org.eclipse.paho.client.mqttv3.MqttMessage
 import org.eclipse.paho.client.mqttv3.MqttClient
+import java.util.*
 
 class Messaging(host: String) : MqttCallback{
-
-    val listenTopics = listOf("home/adb",
-                              "home/lifx")
+    val services = HashMap<String, HomeService>()
 
     var client = MqttClient(host, "Sending")
-
     init {
         setListners(client, host)
+        services.put("home/adb", ADBService())
+        services.put("home/lifx", LifxService())
+        services.put("home/ir", IRService())
     }
 
     override fun connectionLost(cause: Throwable?) {
@@ -24,35 +29,22 @@ class Messaging(host: String) : MqttCallback{
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun messageArrived(topic: String?, message: MqttMessage?) {
-        var actionCall = {};
-        when (topic) {
-            "home/adb" -> {
-                actionCall = {
-                    println("in the action call")
-                }
-            }
-             else -> { // Note the block
-                print("x is neither 1 nor 2")
-            }
-        }
-
-
+    override fun messageArrived(topic: String, message: MqttMessage) {
+        var service = services.get(topic)
+        if(service != null) services.get(topic)!!.doAction(topic, message.toString())
+        else print("SERICE NOT FOUUND")
         println("***Received MESSAGE**")
         println(message.toString())
         setListners(client, client.serverURI)
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
-
 
     fun setListners(clinet: MqttClient , host:String) {
         client = MqttClient(host, "Sending")
         client.connect()
         client.setCallback(this)
-        for(item in listenTopics){
+        for(item in services.keys){
             client.subscribe(item)
         }
     }
-
 
 }

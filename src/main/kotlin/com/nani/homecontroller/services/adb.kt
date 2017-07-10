@@ -1,9 +1,11 @@
 package com.nani.homecontroller.services
 
-class LifxService : HomeService {
+class ADBService : HomeService{
 
     override fun doAction(label: String, messagge: String): ServiceResponse {
-        return ServiceResponse("tets", "test")
+
+
+        return ServiceResponse("", "")
     }
 
 }
