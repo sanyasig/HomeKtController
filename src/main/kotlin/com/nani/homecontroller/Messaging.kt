@@ -15,10 +15,10 @@ class Messaging(host: String) : MqttCallback{
 
     var client = MqttClient(host, "Sending")
     init {
-        setListners(client, host)
         services.put("home/adb", ADBService())
         services.put("home/lifx", LifxService())
         services.put("home/ir", IRService())
+        setListners(client, host)
     }
 
     override fun connectionLost(cause: Throwable?) {
@@ -38,11 +38,13 @@ class Messaging(host: String) : MqttCallback{
         setListners(client, client.serverURI)
     }
 
-    fun setListners(clinet: MqttClient , host:String) {
+    fun setListners(clineast: MqttClient , host:String) {
+        println("Reconnecting to message server")
         client = MqttClient(host, "Sending")
         client.connect()
         client.setCallback(this)
         for(item in services.keys){
+            println("Subscribing to channel " + item)
             client.subscribe(item)
         }
     }
