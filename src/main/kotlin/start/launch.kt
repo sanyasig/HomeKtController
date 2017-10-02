@@ -8,8 +8,7 @@ fun main(args: Array<String>) {
   println("in start")
 
   Messaging(host = "tcp://192.168.0.17:1883")
-  LifxService().doAction("", "turon")
-
+  
   while (true) {
     Thread.sleep(500)
   }

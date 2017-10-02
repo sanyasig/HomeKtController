@@ -1,9 +1,6 @@
 package start.com.nani.homecontroller;
 
-import com.nani.homecontroller.services.ADBService
-import com.nani.homecontroller.services.HomeService
-import com.nani.homecontroller.services.IRService
-import com.nani.homecontroller.services.LifxService
+import com.nani.homecontroller.services.*
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
 import org.eclipse.paho.client.mqttv3.MqttCallback
 import org.eclipse.paho.client.mqttv3.MqttMessage
@@ -11,6 +8,8 @@ import org.eclipse.paho.client.mqttv3.MqttClient
 import java.util.*
 
 class Messaging(host: String) : MqttCallback{
+
+
     val services = HashMap<String, HomeService>()
 
     var client = MqttClient(host, "Sending")
@@ -18,6 +17,7 @@ class Messaging(host: String) : MqttCallback{
         services.put("home/adb", ADBService())
         services.put("home/lifx", LifxService())
         services.put("home/ir", IRService())
+        services.put("home/dash", DashService())
         setListners(client, host)
     }
 
